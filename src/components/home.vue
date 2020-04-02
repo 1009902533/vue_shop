@@ -16,9 +16,18 @@ export default {
   },
   methods: {
     layout () {
-      window.sessionStorage.clear()
-      this.$router.push('/login')
-      this.$message.success('退出成功')
+      this.$confirm('是否确认退出?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.sessionStorage.clear()
+        this.$router.push('/login')
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+      })
     }
   }
 }
