@@ -5,9 +5,16 @@ html,body,ul,p,h1,h2,h3,h4,h5,h6{
 html,body,#app{
     height: 100%;
 }
-a {
+a,a.active {
     text-decoration: none;
+    color: #fff;
 }
 ul,li {
     list-style: none;
+}
+.el-breadcrumb {
+    margin-bottom: 20px;
+}
+.el-card {
+    box-shadow: 0 1px 1px rgba(0,0,0,0.15)!important;
 }
