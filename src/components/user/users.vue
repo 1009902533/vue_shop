@@ -17,7 +17,7 @@
           <el-button type="primary" @click="dialogVisible = true">添加用户</el-button>
         </el-col>
       </el-row>
-      <el-table :border="true" :data="userList" :stripe="true" style="width: 100%">
+      <el-table border :data="userList" stripe style="width: 100%">
         <el-table-column type="index" label="#"></el-table-column>
         <el-table-column prop="username" label="姓名"></el-table-column>
         <el-table-column prop="mobile" label="电话" width="120"></el-table-column>
