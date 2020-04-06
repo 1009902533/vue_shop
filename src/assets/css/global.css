@@ -4,6 +4,7 @@ html,body,ul,p,h1,h2,h3,h4,h5,h6{
 }
 html,body,#app{
     height: 100%;
+    /* min-width: 1366px; */
 }
 a,a.active {
     text-decoration: none;
@@ -17,4 +18,8 @@ ul,li {
 }
 .el-card {
     box-shadow: 0 1px 1px rgba(0,0,0,0.15)!important;
+    min-width: 780px;
+}
+.el-cascader-menu {
+    max-height: 240px;
 }

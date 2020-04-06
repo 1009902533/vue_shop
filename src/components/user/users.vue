@@ -34,13 +34,13 @@
         <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-tooltip content="修改" placement="top" :enterable="false">
-                <el-button @click="editUser(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
+                <el-button @click="editUser(scope.row.id)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               </el-tooltip>
               <el-tooltip content="删除" placement="top" :enterable="false">
                 <el-button @click="delUser(scope.row.id)" type="danger" icon="el-icon-delete" size="mini"></el-button>
               </el-tooltip>
               <el-tooltip content="分配角色" placement="top" :enterable="false">
-                <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>                
+                <el-button @click="setRoles(scope.row)" type="warning" icon="el-icon-setting" size="mini"></el-button>                
               </el-tooltip>
             </template>
         </el-table-column>
@@ -102,6 +102,36 @@
         <el-button type="primary" @click="EdisubmitForm">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 分配角色对话框 -->
+    <el-dialog
+      title="分配角色"
+      @close="closeDialogRoles"
+      :visible.sync="dialogVisibleRoles"
+      width="50%">
+      {{formRoles.username}}
+      <el-form ref="RolesForm" label-width="100px">
+        <el-form-item label="当前的用户：">
+          {{formRoles.username}}
+        </el-form-item>
+        <el-form-item label="当前的角色：">
+          {{formRoles.role_name}}
+        </el-form-item>
+        <el-form-item label="分配新角色：">
+          <el-select v-model="Rolesvalue" placeholder="请选择">
+            <el-option
+              v-for="item in RolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleRoles = false">取 消</el-button>
+        <el-button @click="RoleSubmit" type="primary">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -160,13 +190,24 @@ export default {
         mobile: [
           { validator: checkMobile, required: true, trigger: 'blur' }
         ]
-      }
+      },
+      dialogVisibleRoles: false,
+      RolesList: [],
+      Rolesvalue: '',
+      formRoles: {},
+      userId: 0
     }
   },
   created() {
     this.getUserList()
+    this.getRolesList()
   },
   methods: {
+    async getRolesList() {
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) return this.$message.error('获取角色列表失败')
+      this.RolesList = res.data
+    },
     async getUserList() {
       const { data: res } = await this.$http.get('users', {
         params: this.queryInfo
@@ -199,7 +240,7 @@ export default {
       this.$refs.formAdd.resetFields()
     },
     // 添加用户
-    submitForm(formName) {
+    submitForm() {
       this.$refs.formAdd.validate(async (valid) => {
         if (!valid) return false
         const { data: res } = await this.$http.post('users', this.formAdd)
@@ -211,8 +252,10 @@ export default {
       })
     },
     // 编辑用户
-    async editUser(row) {
-      this.formEdi = row
+    async editUser(id) {
+      const { data: res } = await this.$http.get(`users/${id}`)
+      if (res.meta.status !== 200) return this.$message.error('获取用户失败')
+      this.formEdi = res.data
       console.log(this.formEdi)
       this.dialogVisibleEdi = true
     },
@@ -249,6 +292,23 @@ export default {
           this.queryInfo.pagenum--
         }
       }
+    },
+    // 分配角色
+    async setRoles(role) {
+      this.userId = role.id
+      this.formRoles = role
+      this.dialogVisibleRoles = true
+    },
+    closeDialogRoles() {
+      this.Rolesvalue = ''
+    },
+    // 分配新角色
+    async RoleSubmit() {
+      const { data: res } = await this.$http.put(`users/${this.userId}/role`, { rid: this.Rolesvalue })
+      if (res.meta.status !== 200) return this.$message.error('设置角色失败')
+      this.$message.success('设置角色成功')
+      this.getUserList()
+      this.dialogVisibleRoles = false
     }
   }
 }
