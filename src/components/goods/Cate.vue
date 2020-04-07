@@ -24,15 +24,15 @@
             </template>
             <template slot="order" slot-scope="scope">
                 <el-tag v-if="scope.row.cat_level === 0" size="small">一级</el-tag>
-                <el-tag v-if="scope.row.cat_level === 1" type="info" size="small">二级</el-tag>
-                <el-tag v-if="scope.row.cat_level === 2" type="warning" size="small">三级</el-tag>
+                <el-tag v-else-if="scope.row.cat_level === 1" type="info" size="small">二级</el-tag>
+                <el-tag v-else type="warning" size="small">三级</el-tag>
             </template>
-            <template slot="opt">
+            <template slot="opt" slot-scope="scope">
                 <el-tooltip content="编辑" placement="top" :enterable="false">
-                    <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+                    <el-button @click="ediCate(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
                 </el-tooltip>
                 <el-tooltip content="删除" placement="top" :enterable="false">
-                    <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+                    <el-button @click="delCate(scope.row.cat_id)" type="danger" icon="el-icon-delete" size="mini"></el-button>
                 </el-tooltip>
             </template>
         </tree-table>
@@ -61,7 +61,6 @@
            :options="cateOptions"
            :props="cascaderProps"
            clearable 
-           :collapse-tags="true"
            @change="handleChange">
           </el-cascader>
         </el-form-item>
@@ -69,6 +68,22 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleAdd = false">取 消</el-button>
         <el-button type="primary" @click="AddsubmitForm">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 修改分类对话框 -->
+    <el-dialog
+      title="修改分类"
+      @close="closeEdiDialog"
+      :visible.sync="dialogVisibleEdi"
+      width="50%">
+      <el-form ref="formEdi" :rules="formAddRules" :model="formEdi" label-width="100px">
+        <el-form-item label="分类名称：" prop="cat_name">
+          <el-input v-model="formEdi.cat_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleEdi = false">取 消</el-button>
+        <el-button type="primary" @click="EdisubmitForm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -103,7 +118,7 @@ export default {
         // type:'template'(将该列设置为模板列)，template:'isok'(设置该列模板的名称为isok)
         { label: '是否有效', prop: '', type: 'template', template: 'isok' },
         { label: '排序', prop: '', type: 'template', template: 'order' },
-        { label: '操作', prop: '', type: 'template', template: 'opt' }
+        { label: '操作', prop: '', headerAlign: 'center', type: 'template', template: 'opt', align: 'center' }
       ],
       formAdd: {
         cat_name: '',
@@ -125,7 +140,9 @@ export default {
         expandTrigger: 'hover',
         checkStrictly: true
       },
-      slectedList: []
+      slectedList: [],
+      dialogVisibleEdi: false,
+      formEdi: {}
     }
   },
   created () {
@@ -174,11 +191,9 @@ export default {
       if (this.slectedList.length > 0) {
         this.formAdd.cat_pid = this.slectedList[this.slectedList.length - 1]
         this.formAdd.cat_level = this.slectedList.length
-        return false
       } else {
         this.formAdd.cat_pid = 0
         this.formAdd.cat_level = 0
-        return false
       }
     },
     // 关闭添加面板
@@ -187,6 +202,47 @@ export default {
       this.slectedList = []
       this.formAdd.cat_pid = 0
       this.formAdd.cat_level = 0
+    },
+    // 编辑分类
+    async ediCate(e) {
+      const { data: res } = await this.$http.get(`categories/${e.cat_id}`)
+      if (res.meta.status !== 200) return this.$message.error('获取分类数据失败')
+      this.formEdi = res.data
+      this.dialogVisibleEdi = true
+    },
+    // 确定修改
+    EdisubmitForm() {
+      this.$refs.formEdi.validate(async (valid) => {
+        if (!valid) return false
+        const { data: res } = await this.$http.put(`categories/${this.formEdi.cat_id}`, { cat_name: this.formEdi.cat_name })
+        if (res.meta.status !== 200) return this.$message.error('修改分类失败')
+        this.$message.success('修改分类成功')
+        this.dialogVisibleEdi = false
+        this.getCateList()
+      })
+    },
+    // 修改框关闭时触发
+    closeEdiDialog() {
+      this.$refs.formEdi.resetFields()
+    },
+    // 删除分类
+    async delCate(id) {
+      const rul = await this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch((err) => err)   
+      if (rul !== 'confirm') return this.$message.info('已取消删除') 
+      const { data: res } = await this.$http.delete(`categories/${id}`)
+      if (res.meta.status !== 200) return this.$message.error('删除分类失败')
+      this.$message.success('删除分类成功')
+      this.getCateList()
+      console.log(this.cateList.length)
+      if (this.queryInfo.pagenum > 1) {
+        if (this.cateList.length === 1) {
+          this.queryInfo.pagenum--
+        }
+      }
     }
   }
 }
@@ -195,5 +251,8 @@ export default {
 <style lang="less" scoped>
 .treetable {
   margin: 20px 0;
+}
+.el-cascader {
+  width: 100%;
 }
 </style>

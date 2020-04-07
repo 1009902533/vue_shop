@@ -23,3 +23,21 @@ ul,li {
 .el-cascader-menu {
     max-height: 240px;
 }
+.el-scrollbar__wrap {
+    overflow: auto;
+}
+.el-cascader-node.is-selectable.in-active-path {
+    position: relative;
+}
+.el-radio {
+    position: static;
+}
+.el-cascader-node>.el-radio::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+}
