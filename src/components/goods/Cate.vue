@@ -4,6 +4,7 @@
       <el-card class="box-card">
           <el-button @click="addCate" type="primary">添加分类</el-button>
           <tree-table 
+            v-loading="loading"
             class="treetable"
             index-text="#"
             :data="cateList" 
@@ -93,6 +94,7 @@
 export default {
   data () {
     return {
+      loading: true,
       queryInfo: {
         type: '',
         pagenum: 1,
@@ -154,6 +156,9 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('获取商品列表失败')
       this.cateList = res.data.result
       this.total = res.data.total
+      if (this.cateList.length !== 0) {
+        this.loading = false
+      }
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
