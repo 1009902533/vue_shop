@@ -18,7 +18,7 @@
           </el-row>
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="动态参数" name="many">
-                <el-button @click="AddParams" type="primary" size="mini" :disabled="isDisable">添加参数</el-button>
+                <el-button @click="dialogVisible = true" type="primary" size="mini" :disabled="isDisable">添加参数</el-button>
                 <el-table
                 :data="manyData"
                 border
@@ -65,7 +65,7 @@
                 </el-table>
             </el-tab-pane>
             <el-tab-pane label="静态属性" name="only">
-                <el-button @click="AddAttr" type="primary" size="mini" :disabled="isDisable">添加属性</el-button>
+                <el-button @click="dialogVisible = true" type="primary" size="mini" :disabled="isDisable">添加属性</el-button>
                 <el-table
                 :data="onlyData"
                 border
@@ -219,14 +219,6 @@ export default {
     },
     async handleClick() {
       this.handleChange()
-    },
-    // 添加参数
-    AddParams() {
-      this.dialogVisible = true
-    },
-    // 添加属性
-    AddAttr() {
-      this.dialogVisible = true
     },
     // 编辑
     async ediParams(row) {
