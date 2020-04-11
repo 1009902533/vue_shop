@@ -234,6 +234,7 @@ export default {
       this.$message.success('更新用户状态成功！')
     },
     searchBtn() {
+      this.queryInfo.pagenum = 1
       this.getUserList()
     },
     closeDialog() {
@@ -280,9 +281,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).catch(err => err)
-      if (result !== 'confirm') {
-        return this.$message.info('已经取消删除')
-      }
+      if (result !== 'confirm') return this.$message.info('已经取消删除')
       const { data: res } = await this.$http.delete(`users/${id}`)
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success('删除成功')

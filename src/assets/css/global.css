@@ -23,7 +23,7 @@ ul,li {
 .el-cascader-menu {
     max-height: 240px;
 }
-.el-scrollbar__wrap {
+.el-cascader-menu__wrap  {
     overflow-x: auto;
 }
 .el-cascader-node.is-selectable.in-active-path {
@@ -40,4 +40,10 @@ ul,li {
     top: 0;
     bottom: 0;
     z-index: 1;
+}
+.el-step__title {
+    font-size: 12px;
+}
+.ql-container.ql-snow {
+    height: 350px;
 }
