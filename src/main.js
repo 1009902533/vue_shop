@@ -15,6 +15,7 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import Echarts from 'echarts'
 
 // 设置默认请求地址头
 // axios.defaults.baseURL = 'http://www.klxin.cn:8888/api/private/v1/'
@@ -33,6 +34,7 @@ axios.interceptors.response.use(config => {
   return config
 })
 
+Vue.prototype.$echarts = Echarts
 Vue.prototype.$http = axios
 Vue.prototype.qs = qs
 Vue.config.productionTip = false

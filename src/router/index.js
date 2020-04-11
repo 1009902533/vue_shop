@@ -12,6 +12,7 @@ import Goods from '../components/goods/Goods'
 import GoodsAdd from '../components/goods/add'
 import GoodsEdi from '../components/goods/edi'
 import Orders from '../components/orders/orders'
+import Reports from '../components/reports/reports'
 
 Vue.use(VueRouter)
 
@@ -38,8 +39,8 @@ const routes = [
       { path: '/goods', component: Goods },
       { path: '/goods/add', component: GoodsAdd },
       { path: '/goods/edi/:id', component: GoodsEdi },
-      { path: '/orders', component: Orders }
-
+      { path: '/orders', component: Orders },
+      { path: '/reports', component: Reports }
     ]
   }
 ]
