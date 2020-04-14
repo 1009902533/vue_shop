@@ -18,7 +18,7 @@
           <el-step title="完成"></el-step>
         </el-steps>
         <el-form label-position="top" :rules="addRules" ref="addForm" :model="addForm">
-          <el-tabs tab-position="left" :before-leave="beforeLeave">
+          <el-tabs v-loading="loading" tab-position="left" :before-leave="beforeLeave">
             <el-tab-pane label="基本信息">
               <el-form-item label="商品名称" prop="goods_name">
                 <el-input v-model="addForm.goods_name"></el-input>
@@ -85,6 +85,7 @@
 export default {
   data () {
     return {
+      loading: true,
       actives: 0,
       addForm: {
         goods_name: '',
@@ -166,6 +167,7 @@ export default {
         }
         this.pics.push(obj)
       })
+      this.loading = false
     },
     // 获取商品分类
     async getCateList() {
