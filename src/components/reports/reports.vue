@@ -30,7 +30,7 @@ export default {
       this.yAxis = res.data.yAxis
       this.xAxis = res.data.xAxis[0].data
       this.series = res.data.series
-      console.log(res)
+      console.log(this.yAxis)
       // 初始化myChart实例
       const myChart = this.$echarts.init(this.$refs.myChart)
       // 绘制图表

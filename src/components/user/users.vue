@@ -108,7 +108,6 @@
       @close="closeDialogRoles"
       :visible.sync="dialogVisibleRoles"
       width="50%">
-      {{formRoles.username}}
       <el-form ref="RolesForm" label-width="100px">
         <el-form-item label="当前的用户：">
           {{formRoles.username}}
